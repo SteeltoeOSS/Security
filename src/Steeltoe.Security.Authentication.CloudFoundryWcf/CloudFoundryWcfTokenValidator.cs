@@ -64,6 +64,12 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
                 headers.Add(HttpResponseHeader.WwwAuthenticate, string.Format("Bearer realm=\"default\",error=\"{0}\",error_description=\"{1}\"", message, Regex.Replace(exceptionMessage, @"\s+", " ")));
             }
 
+            WebOperationContext ctx = WebOperationContext.Current;
+            if (ctx != null)
+            {
+                ctx.OutgoingResponse.StatusCode = HttpStatusCode.Unauthorized;
+            }
+
             throw new WebFaultException<string>(exceptionMessage ?? message, HttpStatusCode.Unauthorized);
         }
 

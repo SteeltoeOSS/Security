@@ -17,10 +17,9 @@ using Microsoft.Extensions.Logging;
 using Owin;
 using Steeltoe.CloudFoundry.Connector;
 using Steeltoe.CloudFoundry.Connector.Services;
-using Steeltoe.Security.Authentication.CloudFoundry.Owin;
 using System;
 
-namespace Steeltoe.Security.Authentication.CloudFoundry
+namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
 {
     public static class CloudFoundryExtensions
     {
@@ -30,8 +29,9 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
         /// <param name="appBuilder">Your OWIN AppBuilder</param>
         /// <param name="configuration">Your application configuration</param>
         /// <param name="authenticationType">The identifier for this authentication type. MUST match the value used in your authentication challenge.</param>
+        /// <param name="loggerFactory">For logging with SSO interactions</param>
         /// <returns>Your <see cref="IAppBuilder"/></returns>
-        public static IAppBuilder UseCloudFoundryOpenIdConnect(this IAppBuilder appBuilder, IConfiguration configuration, string authenticationType = CloudFoundryDefaults.AuthenticationScheme)
+        public static IAppBuilder UseCloudFoundryOpenIdConnect(this IAppBuilder appBuilder, IConfiguration configuration, string authenticationType = CloudFoundryDefaults.AuthenticationScheme, LoggerFactory loggerFactory = null)
         {
             if (appBuilder == null)
             {
@@ -44,7 +44,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
             }
 
             // get options with defaults
-            var cloudFoundryOptions = new OpenIdConnectOptions(authenticationType);
+            var cloudFoundryOptions = new OpenIdConnectOptions(authenticationType, loggerFactory);
 
             // get and apply config from application
             var securitySection = configuration.GetSection(CloudFoundryDefaults.SECURITY_CLIENT_SECTION_PREFIX);
@@ -56,7 +56,17 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
 
             return appBuilder.Use(typeof(OpenIdConnectAuthenticationMiddleware), appBuilder, cloudFoundryOptions);
         }
+    }
+}
 
+#pragma warning disable SA1403 // File may only contain a single namespace
+namespace Steeltoe.Security.Authentication.CloudFoundry
+#pragma warning restore SA1403 // File may only contain a single namespace
+{
+#pragma warning disable SA1402 // File may only contain a single class
+    public static class CloudFoundryExtensions
+#pragma warning restore SA1402 // File may only contain a single class
+    {
         /// <summary>
         /// Configures and adds JWT bearer token middleware to the OWIN request pipeline
         /// </summary>

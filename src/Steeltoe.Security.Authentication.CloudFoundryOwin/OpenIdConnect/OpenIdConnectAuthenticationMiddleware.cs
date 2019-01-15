@@ -44,7 +44,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
 
         protected override AuthenticationHandler<OpenIdConnectOptions> CreateHandler()
         {
-            return new OpenIdConnectAuthenticationHandler();
+            return new OpenIdConnectAuthenticationHandler(Options.LoggerFactory?.CreateLogger("OpenIdConnectAuthenticationHandler"));
         }
     }
 

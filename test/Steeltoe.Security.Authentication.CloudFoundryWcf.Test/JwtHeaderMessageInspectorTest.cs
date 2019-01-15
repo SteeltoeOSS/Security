@@ -27,7 +27,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         public void MessageInspector_AttachesUserToken()
         {
             // arrange
-            var options = new CloudFoundryOptions("http://localhost") { ForwardUserCredentials = true };
+            var options = new CloudFoundryOptions() { AuthorizationUrl = "http://localhost", ForwardUserCredentials = true };
             var inspector = new JwtHeaderMessageInspector(options, "someToken");
             var properties = new MessageProperties { { HttpRequestMessageProperty.Name, new HttpRequestMessageProperty() } };
             var message = new Mock<Message>();
@@ -49,7 +49,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         public void MessageInspector_GetsAndAttachesOwnToken()
         {
             // arrange
-            var options = new CloudFoundryOptions("http://localhost", "validId", "validSecret") { AccessTokenEndpoint = "/tokenUrl" };
+            var options = new CloudFoundryOptions() { AccessTokenEndpoint = "/tokenUrl", AuthorizationUrl = "http://localhost", ClientId = "validId", ClientSecret = "validSecret" };
             var inspector = new JwtHeaderMessageInspector(options, null, GetMockHttpClient());
             var properties = new MessageProperties { { HttpRequestMessageProperty.Name, new HttpRequestMessageProperty() } };
             var message = new Mock<Message>();

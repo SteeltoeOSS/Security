@@ -25,9 +25,9 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
     public class CloudFoundryTokenKeyResolverTest
     {
         private readonly string tokenKeysJsonString = @"{'keys':[{'kty':'RSA','e':'AQAB','use':'sig','kid':'key-1','alg':'RS256','value':'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyyt7z23ctJP3UStbx0b/\nLbLWbQfEfOAHh09x7BnFB7vLw4cngzy685LrQyi12FKHDx+0Ux3B4o5hvfHLmgml\npXrWUjf0G3aE77FfMhulmIS9avlNjSUErO7Tgq4/XYiasfWeiIfjhs4cQvOwZeF3\nSBlj5VdHakLertr2DAIigmlziCOkb4is67dfGLZkc8UeKTJmueW56jlT9hyCRjBM\nGbV9LNiaZ6vp+jwk2ugW0pIjMbyfMxoIExiMQmYwT0TP/n8cd89eaKqmO2HXiYL9\nyqqTMMCV6I2lXNxXCEu/cii7kj9Il4aLowzWHJ0Z4XPJsTufV8uZShYxV+gBSekM\nLwIDAQAB\n-----END PUBLIC KEY-----','n':'AMsre89t3LST91ErW8dG_y2y1m0HxHzgB4dPcewZxQe7y8OHJ4M8uvOS60MotdhShw8ftFMdweKOYb3xy5oJpaV61lI39Bt2hO-xXzIbpZiEvWr5TY0lBKzu04KuP12ImrH1noiH44bOHELzsGXhd0gZY-VXR2pC3q7a9gwCIoJpc4gjpG-IrOu3Xxi2ZHPFHikyZrnlueo5U_YcgkYwTBm1fSzYmmer6fo8JNroFtKSIzG8nzMaCBMYjEJmME9Ez_5_HHfPXmiqpjth14mC_cqqkzDAleiNpVzcVwhLv3Iou5I_SJeGi6MM1hydGeFzybE7n1fLmUoWMVfoAUnpDC8'}]}";
-        private readonly CloudFoundryOptions happyPathOptions = new CloudFoundryOptions("http://localhost");
-        private readonly CloudFoundryOptions networkFailOptions = new CloudFoundryOptions("http://localhost:81");
-        private readonly CloudFoundryOptions serviceUnavailableOptions = new CloudFoundryOptions("http://localhost:82");
+        private readonly CloudFoundryOptions happyPathOptions = new CloudFoundryOptions() { AuthorizationUrl = "http://localhost" };
+        private readonly CloudFoundryOptions networkFailOptions = new CloudFoundryOptions() { AuthorizationUrl = "http://localhost:81" };
+        private readonly CloudFoundryOptions serviceUnavailableOptions = new CloudFoundryOptions() { AuthorizationUrl = "http://localhost:82" };
 
         [Fact]
         public void TokenKeyResolver_Requires_Options()

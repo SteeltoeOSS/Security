@@ -50,7 +50,8 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
         /// <returns>The response from the remote server</returns>
         public async Task<HttpResponseMessage> ExchangeCodeForToken(string code, string targetUrl, CancellationToken cancellationToken)
         {
-            HttpRequestMessage requestMessage = GetTokenRequestMessage(code, targetUrl);
+            var requestParameters = AuthCodeTokenRequestParameters(code);
+            HttpRequestMessage requestMessage = GetTokenRequestMessage(requestParameters, targetUrl);
             _logger?.LogDebug("Exchanging code {code} for token at {accessTokenUrl}", code, targetUrl);
 
             HttpClientHelper.ConfigureCertificateValidatation(
@@ -108,7 +109,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
         /// <returns>HttpResponse from the auth server</returns>
         public async Task<HttpResponseMessage> GetAccessTokenWithClientCredentials(string targetUrl)
         {
-            HttpRequestMessage requestMessage = GetTokenRequestMessage(null, targetUrl);
+            HttpRequestMessage requestMessage = GetTokenRequestMessage(ClientCredentialsTokenRequestParameters(), targetUrl);
 
             HttpClientHelper.ConfigureCertificateValidatation(_options.ValidateCertificates, out SecurityProtocolType protocolType, out RemoteCertificateValidationCallback prevValidator);
 
@@ -125,11 +126,15 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
             return response;
         }
 
-        protected internal virtual HttpRequestMessage GetTokenRequestMessage(string code, string targetUrl)
+        /// <summary>
+        /// Builds an <see cref="HttpRequestMessage"/> that will POST with the params to the target
+        /// </summary>
+        /// <param name="parameters">Body of the request to send</param>
+        /// <param name="targetUrl">Location to send the request</param>
+        /// <returns>A request primed for receiving a token</returns>
+        internal HttpRequestMessage GetTokenRequestMessage(List<KeyValuePair<string, string>> parameters, string targetUrl)
         {
-            var tokenRequestParameters = GetTokenRequestParameters(code);
-
-            var requestContent = new FormUrlEncodedContent(tokenRequestParameters);
+            var requestContent = new FormUrlEncodedContent(parameters);
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, targetUrl);
             requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -138,12 +143,29 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
         }
 
         /// <summary>
-        /// If code is not provided, uses client credentials
+        /// Gets request parameters for authorization_code Token request
         /// </summary>
         /// <param name="code">Authorization code to be exchanged for token</param>
-        /// <param name="redirectUri">Location to send the user after code exchange</param>
         /// <returns>Content for HTTP request</returns>
-        protected internal KeyValuePair<string, string>[] GetTokenRequestParameters(string code, string redirectUri = null)
+        internal List<KeyValuePair<string, string>> AuthCodeTokenRequestParameters(string code)
+        {
+            var parms = CommonTokenRequestParams();
+            parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsRedirectUri, _options.CallbackUrl));
+            parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsCode, code));
+            parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsGrantType, OpenIdConnectGrantTypes.AuthorizationCode));
+
+            return parms;
+        }
+
+        internal List<KeyValuePair<string, string>> ClientCredentialsTokenRequestParameters()
+        {
+            var parms = CommonTokenRequestParams();
+            parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsGrantType, OpenIdConnectGrantTypes.ClientCredentials));
+
+            return parms;
+        }
+
+        internal List<KeyValuePair<string, string>> CommonTokenRequestParams()
         {
             var scopes = "openid " + _options.AdditionalTokenScopes;
             if (_options.RequiredScopes != null)
@@ -151,30 +173,15 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
                 scopes = string.Join(" ", scopes, _options.RequiredScopes);
             }
 
-            var parms = new List<KeyValuePair<string, string>>
+            return new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsClientId, _options.ClientId),
                 new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsClientSecret, _options.ClientSecret),
-                new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsRedirectUri, redirectUri ?? _options.CallbackUrl),
                 new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsScope, scopes)
             };
-
-            // REVIEW: bad idea?
-            if (code != null)
-            {
-                parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsCode, code));
-                parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsGrantType, OpenIdConnectGrantTypes.AuthorizationCode));
-            }
-            else
-            {
-                parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsResponseType, "token"));
-                parms.Add(new KeyValuePair<string, string>(CloudFoundryDefaults.ParamsGrantType, OpenIdConnectGrantTypes.ClientCredentials));
-            }
-
-            return parms.ToArray();
         }
 
-        private ClaimsIdentity BuildIdentityWithClaims(IEnumerable<Claim> claims, string tokenScopes, string accessToken)
+        internal ClaimsIdentity BuildIdentityWithClaims(IEnumerable<Claim> claims, string tokenScopes, string accessToken)
         {
 #if DEBUG
             foreach (var claim in claims)

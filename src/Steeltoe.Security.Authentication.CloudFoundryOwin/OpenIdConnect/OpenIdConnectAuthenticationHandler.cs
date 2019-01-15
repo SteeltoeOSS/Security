@@ -24,19 +24,19 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
 {
     public class OpenIdConnectAuthenticationHandler : AuthenticationHandler<OpenIdConnectOptions>
     {
-        private readonly ILogger<OpenIdConnectAuthenticationHandler> _logger;
+        private readonly ILogger _logger;
 
-        public OpenIdConnectAuthenticationHandler(ILogger<OpenIdConnectAuthenticationHandler> logger = null)
+        public OpenIdConnectAuthenticationHandler(ILogger logger = null)
         {
             _logger = logger;
         }
 
-         /// <summary>
-         /// Invoked for every request.As this is passive middleware, we only want to branch off
-         /// the authentication flow if the request being invoked is the callback path we gave as a redirect
-         /// uri to the auth flow when invoking the IDP
-         /// </summary>
-         /// <returns>A bool used to determine whether or not to continue down the OWIN pipline</returns>
+        /// <summary>
+        /// Invoked for every request.As this is passive middleware, we only want to branch off
+        /// the authentication flow if the request being invoked is the callback path we gave as a redirect
+        /// uri to the auth flow when invoking the IDP
+        /// </summary>
+        /// <returns>A bool used to determine whether or not to continue down the OWIN pipline</returns>
         public override async Task<bool> InvokeAsync()
         {
             if (Options.CallbackPath.HasValue && Options.CallbackPath == Request.Path)
@@ -64,6 +64,13 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
             }
 
             var code = Request.Query["code"];
+            if (code == null)
+            {
+                var error = Request.Query["error"];
+                var error_description = Request.Query["error_description"];
+                _logger?.LogError("No auth code detected in SSO response. Error: {error}, Description: {error_description}", error, error_description);
+            }
+
             _logger?.LogDebug("Received an authorization code from IDP: " + code);
             _logger?.LogInformation("== exchanging auth code for token ==");
 

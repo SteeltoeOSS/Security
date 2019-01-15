@@ -37,12 +37,11 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
         /// </summary>
         /// <param name="options">Con</param>
         /// <param name="httpClient">For interacting with the OAuth server. A new instance will be created if not provided.</param>
-        /// <param name="loggerFactory">A loggerfactory, for creating loggers for this class and deeper classes</param>
-        public CloudFoundryClientTokenResolver(CloudFoundryOptions options, HttpClient httpClient = null, ILoggerFactory loggerFactory = null)
+        public CloudFoundryClientTokenResolver(CloudFoundryOptions options, HttpClient httpClient = null)
         {
             Options = options ?? throw new ArgumentNullException(nameof(options), "Options are required");
-            _tokenExchanger = new TokenExchanger(options, httpClient, loggerFactory?.CreateLogger<TokenExchanger>());
-            _logger = loggerFactory?.CreateLogger<CloudFoundryClientTokenResolver>();
+            _tokenExchanger = new TokenExchanger(options, httpClient, options.LoggerFactory?.CreateLogger<TokenExchanger>());
+            _logger = Options.LoggerFactory?.CreateLogger<CloudFoundryClientTokenResolver>();
         }
 
         /// <summary>

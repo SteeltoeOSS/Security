@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -20,11 +21,12 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
 {
     public class OpenIdConnectOptions : AuthenticationOptions
     {
-        public OpenIdConnectOptions(string authenticationType = CloudFoundryDefaults.DisplayName)
+        public OpenIdConnectOptions(string authenticationType = CloudFoundryDefaults.DisplayName, LoggerFactory loggerFactory = null)
            : base(authenticationType)
         {
             Description.Caption = authenticationType;
             AuthenticationMode = AuthenticationMode.Passive;
+            LoggerFactory = loggerFactory;
         }
 
         public PathString CallbackPath { get; set; } = new PathString(CloudFoundryDefaults.CallbackPath);
@@ -75,6 +77,8 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin
                 CallbackUrl = callbackUrl ?? "https://" + AppHost + (AppPort != 0 ? ":" + AppPort : string.Empty) + CallbackPath
             };
         }
+
+        internal ILoggerFactory LoggerFactory;
     }
 
     [Obsolete("This class is being renamed OpenIdConnectOptions")]

@@ -20,7 +20,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
     public class CloudFoundryOptionsTest
     {
         [Fact]
-        public void OldConstructor_StillReadsEnvVars()
+        public void ParameterlessConstructor_StillReadsEnvVars()
         {
             // arrange
             Environment.SetEnvironmentVariable("sso_auth_domain", "auth_domain");
@@ -28,14 +28,17 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
             Environment.SetEnvironmentVariable("sso_client_secret", "ssoClientSecret");
 
             // act
-#pragma warning disable CS0618 // Type or member is obsolete
             var options = new CloudFoundryOptions();
-#pragma warning restore CS0618 // Type or member is obsolete
 
             // assert
             Assert.Equal("auth_domain", options.AuthorizationUrl);
             Assert.Equal("ssoClientId", options.ClientId);
             Assert.Equal("ssoClientSecret", options.ClientSecret);
+
+            // reset the env
+            Environment.SetEnvironmentVariable("sso_auth_domain", string.Empty);
+            Environment.SetEnvironmentVariable("sso_client_id", string.Empty);
+            Environment.SetEnvironmentVariable("sso_client_secret", string.Empty);
         }
     }
 }

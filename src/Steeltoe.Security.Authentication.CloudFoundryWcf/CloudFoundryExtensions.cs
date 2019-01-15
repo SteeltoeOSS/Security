@@ -13,9 +13,11 @@
 // limitations under the License.
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Steeltoe.CloudFoundry.Connector;
 using Steeltoe.CloudFoundry.Connector.Services;
 using System;
+using System.Net.Http;
 using System.ServiceModel;
 
 namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
@@ -27,8 +29,10 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
         /// </summary>
         /// <param name="serviceHost">Your service to be secured with JWT Auth</param>
         /// <param name="configuration">Your application configuration, including VCAP_SERVICES</param>
+        /// <param name="httpClient">Provide your own http client for interacting with the security server</param>
+        /// <param name="loggerFactory">For logging within the library</param>
         /// <returns>Your service</returns>
-        public static ServiceHost AddJwtAuthorization(this ServiceHost serviceHost, IConfiguration configuration)
+        public static ServiceHost AddJwtAuthorization(this ServiceHost serviceHost, IConfiguration configuration, HttpClient httpClient = null, LoggerFactory loggerFactory = null)
         {
             if (serviceHost == null)
             {
@@ -41,11 +45,13 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
             }
 
             // get options with defaults
-            var cloudFoundryOptions = new CloudFoundryOptions();
+            var cloudFoundryOptions = new CloudFoundryOptions(httpClient, loggerFactory);
 
             // get and apply config from application
             var securitySection = configuration.GetSection(CloudFoundryDefaults.SECURITY_CLIENT_SECTION_PREFIX);
             securitySection.Bind(cloudFoundryOptions);
+
+            cloudFoundryOptions.TokenValidationParameters = cloudFoundryOptions.GetTokenValidationParameters();
 
             // get and apply service binding info
             SsoServiceInfo info = configuration.GetSingletonServiceInfo<SsoServiceInfo>();

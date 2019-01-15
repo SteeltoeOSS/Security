@@ -33,7 +33,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         public async void ClientTokenResolver_ReturnsAccessToken_OnSuccess()
         {
             // arrange
-            var options = new CloudFoundryOptions("http://localhost", "validId", "clientSecret") { AccessTokenEndpoint = "/tokenUrl" };
+            var options = new CloudFoundryOptions() { AccessTokenEndpoint = "/tokenUrl", AuthorizationUrl = "http://localhost", ClientId = "validId", ClientSecret = "clientSecret" };
             var resolver = new CloudFoundryClientTokenResolver(options, GetMockHttpClient());
             var expectedToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtleS0xIiwidHlwIjoiSldUIn0.eyJqdGkiOiI3YTMzYzVhNjhjY2I0YjRiYmQ5N2I4MTRlZWExMTc3MiIsInN1YiI6Ijk1YmJiMzQ2LWI2OGMtNGYxNS1iMzQxLTcwZDYwZjlmNDZiYSIsInNjb3BlIjpbInRlc3Rncm91cCIsIm9wZW5pZCJdLCJjbGllbnRfaWQiOiJjOTIwYjRmNS00ODdjLTRkZDAtYTYzZC00ZDQwYzEzMzE5ODYiLCJjaWQiOiJjOTIwYjRmNS00ODdjLTRkZDAtYTYzZC00ZDQwYzEzMzE5ODYiLCJhenAiOiJjOTIwYjRmNS00ODdjLTRkZDAtYTYzZC00ZDQwYzEzMzE5ODYiLCJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwidXNlcl9pZCI6Ijk1YmJiMzQ2LWI2OGMtNGYxNS1iMzQxLTcwZDYwZjlmNDZiYSIsIm9yaWdpbiI6InVhYSIsInVzZXJfbmFtZSI6ImRhdmUiLCJlbWFpbCI6ImRhdmVAdGVzdGNsb3VkLmNvbSIsImF1dGhfdGltZSI6MTU0NjY0MjkzMywicmV2X3NpZyI6ImE1ZWY2ODg5IiwiaWF0IjoxNTQ2NjQyOTM1LCJleHAiOjE1NDY2ODYxMzUsImlzcyI6Imh0dHBzOi8vc3RlZWx0b2UudWFhLmNmLmJlZXQuc3ByaW5nYXBwcy5pby9vYXV0aC90b2tlbiIsInppZCI6IjNhM2VhZGFkLTViMmYtNDUzMC1hZjk1LWE2OWJjMGFmZDE1YiIsImF1ZCI6WyJvcGVuaWQiLCJjOTIwYjRmNS00ODdjLTRkZDAtYTYzZC00ZDQwYzEzMzE5ODYiXX0.tGTXZzuuUSObTwdPHSx-zvnld20DH5hlOZlYp5DhjwkMIsZB0uIvVwbVDkPp7H_AmmeJoo6vqa5hbbgfgnYpTrKlCGOypnHoa3yRIKrwcDmLLujaMz6ApZeaJ7sJN-0N1UnPZ9iGcqvt9hNb_198zRnMXGH72oI0e2iGUBV1olCFVdZTnMGT7sUieDFKy7n0ghZYq_gUI8rfvTwiC3lfxv0nDXz4oE9Z-UKhK6q1zkAtQrz61FQ_CHONejz1JnuxQFKMMvm8JLcRkn6OL-EcSi1hkmFw0efO1OqccQacxphlafyHloVPQ3IOtzLjCf8sJ5NgTdCTC3iddT_sYovdrg";
 
@@ -48,7 +48,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         public async void ClientTokenResolver_Throws_OnRemoteFail()
         {
             // arrange
-            var options = new CloudFoundryOptions("http://localhost", "badId", "clientSecret") { AccessTokenEndpoint = "/tokenUrl" };
+            var options = new CloudFoundryOptions() { AccessTokenEndpoint = "/tokenUrl", AuthorizationUrl = "http://localhost", ClientId = "badId", ClientSecret = "clientSecret" };
             var resolver = new CloudFoundryClientTokenResolver(options, GetMockHttpClient());
 
             // act

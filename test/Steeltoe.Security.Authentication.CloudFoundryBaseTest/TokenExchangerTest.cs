@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using RichardSzalay.MockHttp;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -32,7 +34,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
             var tEx = new TokenExchanger(opts);
 
             // act
-            var message = tEx.GetTokenRequestMessage("code", "redirectUri");
+            var message = tEx.GetTokenRequestMessage(new List<KeyValuePair<string, string>>(), "redirectUri");
 
             // assert
             Assert.NotNull(message);
@@ -44,22 +46,39 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
         }
 
         [Fact]
-        public void GetTokenRequestParameters_ReturnsCorrectly()
+        public void AuthCodeTokenRequestParameters_ReturnsCorrectly()
         {
             // arrange
-            var opts = new AuthServerOptions { ClientId = "clientId", ClientSecret = "clientSecret" };
+            var opts = new AuthServerOptions { ClientId = "clientId", ClientSecret = "clientSecret", CallbackUrl = "redirect_uri" };
             var tEx = new TokenExchanger(opts);
 
             // act
-            var parameters = tEx.GetTokenRequestParameters("code", "redirectUri");
+            var parameters = tEx.AuthCodeTokenRequestParameters("authcode");
 
             // assert
             Assert.NotNull(parameters);
             Assert.Equal(opts.ClientId, parameters.First(i => i.Key == "client_id").Value);
             Assert.Equal(opts.ClientSecret, parameters.First(i => i.Key == "client_secret").Value);
-            Assert.Equal("redirectUri", parameters.First(i => i.Key == "redirect_uri").Value);
-            Assert.Equal("code", parameters.First(i => i.Key == "code").Value);
-            Assert.Equal("authorization_code", parameters.First(i => i.Key == "grant_type").Value);
+            Assert.Equal("redirect_uri", parameters.First(i => i.Key == "redirect_uri").Value);
+            Assert.Equal("authcode", parameters.First(i => i.Key == "code").Value);
+            Assert.Equal(OpenIdConnectGrantTypes.AuthorizationCode, parameters.First(i => i.Key == "grant_type").Value);
+        }
+
+        [Fact]
+        public void ClientCredentialsTokenRequestParameters_ReturnsCorrectly()
+        {
+            // arrange
+            var opts = new AuthServerOptions { ClientId = "clientId", ClientSecret = "clientSecret", CallbackUrl = "redirect_uri" };
+            var tEx = new TokenExchanger(opts);
+
+            // act
+            var parameters = tEx.ClientCredentialsTokenRequestParameters();
+
+            // assert
+            Assert.NotNull(parameters);
+            Assert.Equal(opts.ClientId, parameters.First(i => i.Key == "client_id").Value);
+            Assert.Equal(opts.ClientSecret, parameters.First(i => i.Key == "client_secret").Value);
+            Assert.Equal(OpenIdConnectGrantTypes.ClientCredentials, parameters.First(i => i.Key == "grant_type").Value);
         }
 
         [Fact]
