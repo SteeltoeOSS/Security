@@ -94,7 +94,10 @@ namespace Steeltoe.Security.Authentication.CloudFoundry
         {
             _logger?.LogDebug("ExchangeCodeAsync({code}, {redirectUri})", code, redirectUri);
 
-            var tEx = new TokenExchanger(Options.BaseOptions(), GetHttpClient());
+            var options = Options.BaseOptions();
+            options.CallbackUrl = redirectUri;
+
+            var tEx = new TokenExchanger(options, GetHttpClient());
             HttpResponseMessage response = await tEx.ExchangeCodeForToken(code, Options.TokenEndpoint, Context.RequestAborted);
 
             if (response.IsSuccessStatusCode)
