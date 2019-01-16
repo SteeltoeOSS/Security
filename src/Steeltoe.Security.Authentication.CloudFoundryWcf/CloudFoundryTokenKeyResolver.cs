@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 
 namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
 {
+    [Obsolete("This class will be removed in favor of Steeltoe.Security.Authentication.CloudFoundry.CloudFoundryTokenKeyResolver")]
     public class CloudFoundryTokenKeyResolver
     {
         private readonly HttpClient _httpClient;
@@ -106,7 +107,6 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
             return null;
         }
 
-        [Obsolete("This method is not used internally anymore, and will be removed")]
         public virtual JsonWebKeySet GetJsonWebKeySet(string json)
         {
             return new JsonWebKeySetEx(json);

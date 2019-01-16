@@ -45,13 +45,11 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf
             }
 
             // get options with defaults
-            var cloudFoundryOptions = new CloudFoundryOptions(httpClient, loggerFactory);
+            var cloudFoundryOptions = new CloudFoundryOptions(loggerFactory);
 
             // get and apply config from application
             var securitySection = configuration.GetSection(CloudFoundryDefaults.SECURITY_CLIENT_SECTION_PREFIX);
             securitySection.Bind(cloudFoundryOptions);
-
-            cloudFoundryOptions.TokenValidationParameters = cloudFoundryOptions.GetTokenValidationParameters();
 
             // get and apply service binding info
             SsoServiceInfo info = configuration.GetSingletonServiceInfo<SsoServiceInfo>();

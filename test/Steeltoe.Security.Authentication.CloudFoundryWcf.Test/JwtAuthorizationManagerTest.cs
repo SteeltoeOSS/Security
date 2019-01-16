@@ -97,7 +97,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         {
             // arrange
             _options.TokenKeyResolver = null;
-            _options.TokenKeyResolver = new CloudFoundryTokenKeyResolver(_options, GetMockHttpClient());
+            _options.TokenKeyResolver = new CloudFoundry.CloudFoundryTokenKeyResolver(_options.AuthorizationUrl + CloudFoundryDefaults.JwtTokenUri, GetMockHttpMessageHandler(), false);
             _options.TokenValidator.Options = _options;
             _options.TokenValidationParameters = null;
             _options.TokenValidationParameters = _options.GetTokenValidationParameters();
@@ -119,7 +119,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         {
             // arrange
             _options.TokenKeyResolver = null;
-            _options.TokenKeyResolver = new CloudFoundryTokenKeyResolver(_options, GetMockHttpClient());
+            _options.TokenKeyResolver = new CloudFoundry.CloudFoundryTokenKeyResolver(_options.AuthorizationUrl + CloudFoundryDefaults.JwtTokenUri, GetMockHttpMessageHandler(), false);
             _options.TokenValidator.Options = _options;
             _options.TokenValidationParameters = null;
             _options.TokenValidationParameters = _options.GetTokenValidationParameters();
@@ -137,7 +137,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
             Assert.Equal("dave", principal.Identity.Name);
         }
 
-        private HttpClient GetMockHttpClient()
+        private HttpMessageHandler GetMockHttpMessageHandler()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -145,7 +145,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
                 .When(HttpMethod.Get, _options.AuthorizationUrl + CloudFoundryDefaults.JwtTokenUri)
                 .Respond("application/json", tokenKeysJsonString); // Respond with JSON
 
-            return mockHttp.ToHttpClient();
+            return mockHttp;
         }
 
         private string CreateJwt()
