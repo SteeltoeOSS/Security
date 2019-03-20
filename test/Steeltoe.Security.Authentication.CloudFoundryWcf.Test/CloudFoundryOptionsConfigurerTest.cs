@@ -52,9 +52,9 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Wcf.Test
         public void Configure_WithServiceInfo_ReturnsExpected()
         {
             // arrange
-            string authURL = "http://domain";
+            string authURL = "https://domain";
             var opts = new CloudFoundryOptions();
-            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "http://domain");
+            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "https://domain");
 
             // act
             CloudFoundryOptionsConfigurer.Configure(info, opts);

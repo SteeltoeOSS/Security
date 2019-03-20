@@ -38,7 +38,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin.Test
         public void Configure_NoOptions_ReturnsExpected()
         {
             // arrange
-            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "http://domain");
+            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "https://domain");
 
             // act
             CloudFoundryJwtOwinConfigurer.Configure(info, null);
@@ -53,13 +53,13 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Owin.Test
             // arrange
             CloudFoundryJwtBearerAuthenticationOptions opts = new CloudFoundryJwtBearerAuthenticationOptions();
             Assert.Null(opts.TokenValidationParameters);
-            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "http://domain");
+            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "https://domain");
 
             // act
             CloudFoundryJwtOwinConfigurer.Configure(info, opts);
 
             // assert
-            Assert.Equal("http://domain" + CloudFoundryDefaults.JwtTokenUri, opts.JwtKeyUrl);
+            Assert.Equal("https://domain" + CloudFoundryDefaults.JwtTokenUri, opts.JwtKeyUrl);
             Assert.True(opts.ValidateCertificates); // <- default value
             Assert.NotNull(opts.TokenValidationParameters);
         }

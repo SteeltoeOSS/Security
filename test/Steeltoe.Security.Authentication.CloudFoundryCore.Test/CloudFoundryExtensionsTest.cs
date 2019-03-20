@@ -64,7 +64,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
                 var result = await client.GetAsync("http://localhost/");
                 Assert.Equal(HttpStatusCode.Redirect, result.StatusCode);
                 var location = result.Headers.Location.ToString();
-                Assert.StartsWith("http://default_oauthserviceurl/oauth/authorize", location);
+                Assert.StartsWith("https://default_oauthserviceurl/oauth/authorize", location);
             }
         }
 

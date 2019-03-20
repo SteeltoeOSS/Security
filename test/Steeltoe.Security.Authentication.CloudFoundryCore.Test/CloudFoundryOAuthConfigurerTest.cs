@@ -48,10 +48,10 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
         public void Configure_WithServiceInfo_ReturnsExpected()
         {
             CloudFoundryOAuthOptions opts = new CloudFoundryOAuthOptions();
-            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "http://domain");
+            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "https://domain");
             CloudFoundryOAuthConfigurer.Configure(info, opts);
 
-            string authURL = "http://domain";
+            string authURL = "https://domain";
             Assert.Equal(CloudFoundryDefaults.AuthenticationScheme, opts.ClaimsIssuer);
             Assert.Equal("clientId", opts.ClientId);
             Assert.Equal("secret", opts.ClientSecret);

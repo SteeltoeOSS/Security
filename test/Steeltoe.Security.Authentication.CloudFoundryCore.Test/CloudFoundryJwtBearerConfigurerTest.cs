@@ -39,11 +39,11 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
         public void Configure_WithServiceInfo_ReturnsExpected()
         {
             CloudFoundryJwtBearerOptions opts = new CloudFoundryJwtBearerOptions();
-            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "http://domain");
+            SsoServiceInfo info = new SsoServiceInfo("foobar", "clientId", "secret", "https://domain");
             JwtBearerOptions jwtOpts = new JwtBearerOptions();
 
             CloudFoundryJwtBearerConfigurer.Configure(info, jwtOpts, opts);
-            Assert.Equal("http://domain" + CloudFoundryDefaults.JwtTokenUri, opts.JwtKeyUrl);
+            Assert.Equal("https://domain" + CloudFoundryDefaults.JwtTokenUri, opts.JwtKeyUrl);
             Assert.True(opts.ValidateCertificates);
             Assert.Equal(opts.ClaimsIssuer, jwtOpts.ClaimsIssuer);
             Assert.Null(jwtOpts.BackchannelHttpHandler);

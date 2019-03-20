@@ -26,8 +26,8 @@ namespace Steeltoe.Security.DataProtection.CredHub.Test
 {
     public class CredHubClientTests
     {
-        private Uri tokenUri = new Uri("http://uaa-server/oauth/token");
-        private string credHubBase = "http://credhubServer/api/";
+        private Uri tokenUri = new Uri("https://uaa-server/oauth/token");
+        private string credHubBase = "https://credhubServer/api/";
 
         [Fact]
         public async void CreateAsync_RequestsToken_Once()
@@ -923,8 +923,8 @@ namespace Steeltoe.Security.DataProtection.CredHub.Test
         {
             var mockHttpMessageHandler = new MockHttpMessageHandler();
             var infoUrl = credHubBase.Replace("/api", "/info");
-            var infoRequest = mockHttpMessageHandler.Expect(HttpMethod.Get, infoUrl).Respond("application/json", "{\"auth-server\": {\"url\": \"http://uaa-server\"},\"app\":{\"name\":\"CredHub\" }}");
-            authRequest = mockHttpMessageHandler.Expect(HttpMethod.Post, "http://uaa-server/oauth/token").Respond("application/json", "{\"access_token\" : \"fake token\"}");
+            var infoRequest = mockHttpMessageHandler.Expect(HttpMethod.Get, infoUrl).Respond("application/json", "{\"auth-server\": {\"url\": \"https://uaa-server\"},\"app\":{\"name\":\"CredHub\" }}");
+            authRequest = mockHttpMessageHandler.Expect(HttpMethod.Post, "https://uaa-server/oauth/token").Respond("application/json", "{\"access_token\" : \"fake token\"}");
             return mockHttpMessageHandler;
         }
     }

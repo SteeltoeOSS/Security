@@ -82,7 +82,7 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
 
             MyTestCloudFoundryHandler testHandler = GetTestHandler(opts);
             var logger = new LoggerFactory().CreateLogger("ExchangeCodeAsync_SendsTokenRequest");
-            var resp = await testHandler.TestExchangeCodeAsync("code", "http://redirectUri");
+            var resp = await testHandler.TestExchangeCodeAsync("code", "https://redirectUri");
 
             Assert.NotNull(handler.LastRequest);
             Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
@@ -114,8 +114,8 @@ namespace Steeltoe.Security.Authentication.CloudFoundry.Test
             var logger = new LoggerFactory().CreateLogger("ExchangeCodeAsync_SendsTokenRequest");
 
             AuthenticationProperties props = new AuthenticationProperties();
-            string result = testHandler.TestBuildChallengeUrl(props, "http://foo.bar/redirect");
-            Assert.Equal("http://Default_OAuthServiceUrl/oauth/authorize?response_type=code&client_id=Default_ClientId&redirect_uri=http%3A%2F%2Ffoo.bar%2Fredirect&scope=", result);
+            string result = testHandler.TestBuildChallengeUrl(props, "https://foo.bar/redirect");
+            Assert.Equal("https://Default_OAuthServiceUrl/oauth/authorize?response_type=code&client_id=Default_ClientId&redirect_uri=http%3A%2F%2Ffoo.bar%2Fredirect&scope=", result);
         }
 
         [Fact]
