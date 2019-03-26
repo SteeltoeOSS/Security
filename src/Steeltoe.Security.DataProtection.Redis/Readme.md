@@ -4,4 +4,4 @@ This project contains a [ASP.NET Core DataProtection Key Storage Provider](https
 
 This provider simplifies using Redis on CloudFoundry as a custom key repository.
 
-For more information on how to use this component see the online [Steeltoe documentation](http://steeltoe.io/).
+For more information on how to use this component see the online [Steeltoe documentation](https://steeltoe.io/).
