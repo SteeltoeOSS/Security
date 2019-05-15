@@ -1,5 +1,7 @@
 # ASP.NET Security Providers
 
+> NOTICE: This repository has been relocated as a sub-directory under the [Steeltoe](https://github.com/SteeltoeOSS/steeltoe) repository. All issues and future development will be done under that repository.
+
 This repository contains various security providers which simplify the process of using Security services on CloudFoundry.
 
 Windows Master (Stable): [![AppVeyor Master](https://ci.appveyor.com/api/projects/status/w27a5c4x64pd7jyq?svg=true)](https://ci.appveyor.com/project/steeltoe/security)
